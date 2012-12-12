@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">    
   
     <link rel="stylesheet" href="wt_common/jquery-mobile/jquery.mobile-1.2.0.min.css" />
-		
+	<link rel="stylesheet" href="http://jquerymobile.com/demos/1.2.0/docs/_assets/css/jqm-docs.css"/>
 	<script src="wt_common/jquery/jquery-1.8.2.min.js"></script>
 	<script src="wt_common/jquery-mobile/jquery.mobile-1.2.0.min.js"></script>  
 	<script>
@@ -15,18 +15,63 @@
 	$(document).bind("mobileinit", function(){
   		$.mobile.allowCrossDomainPages = true;
 	});
+	
+	function setTimeUrl(){
+		var date    = new Date();
+		var unixtimeMS = date.getTime();
+		var unixtime = parseInt(unixtimeMS / 1000);
+		document.surveyform.timeurl.value=unixtime;
+	}
+
+	$(document).bind('pagebeforechange', function(e, data) {
+	    var to = data.toPage,
+	        from = data.options.fromPage;
+
+	    if (typeof to === 'string') {
+	        var u = $.mobile.path.parseUrl(to);
+	        to = u.hash || '#' + u.pathname.substring(1);
+	        if (from) from = '#' + from.attr('id');
+
+	        if ((from === '#page1') && (checkRequired('storename')==false)) {
+	            //alert('Cannot change to page 2 from page 1');
+	            e.preventDefault();
+
+	            // remove active class on button
+	            // otherwise button would remain highlighted
+	            $.mobile.activePage
+	                .find('.ui-btn-active')
+	                .removeClass('ui-btn-active');
+	        }            
+	    }
+	});
+		
+	function checkRequired(fieldname){
+		var fld_id=fieldname+'_id';
+		var label_req=fieldname+'_req';
+		var elem = document.getElementById(fld_id);
+		if (elem.value.length == 0){
+			//alert('Cannot go forward until you enter some store name');
+			$('#'+label_req).show();
+			return false;
+
+		} else {
+			//alert('Doing true');
+			$('#'+label_req).hide();
+			return true;
+		}
+	}
 	</script>	
 </head>   
 		
 <body>
-<form action="http://worktrainer.co.za/cx_mobisave.php" method="post" data-ajax="false">
+<form name="surveyform" onSubmit="setTimeUrl()" action="http://worktrainer.co.za/cx_mobisave.php" method="post" data-ajax="false">
 <div data-role="page" id="index">
 	<header data-role="header">
 		<div><center><h2>Edcon CX Survey</h2></center></div>
 	</header>
 	
 	<div data-role="content">
-		<p>This is a staff shopping experience questionaire and we value your input in our ongoing quest to deliver the BEST shopping experience for our customers.</p>
+		<p>This is a staff shopping experience questionnaire and we value your input in our ongoing quest to deliver the BEST shopping experience for our customers.</p>
 		<p><a href="#page1" data-role="button" data-theme="b" data-inline="true">Start</a></p>
 	</div>
 	
@@ -37,32 +82,33 @@
 
 <div data-role="page" id="page1" data-add-back-btn="true" data-theme="b">
 	<header data-role="header" >
-		<h1>Page 1 of 5</h1>
+		<h1>Page 1 of 6</h1>
 	</header>
 	
 	<div data-role="content">
-		<label for="q1_store">Which store did you shop at?</label>
-		<textarea name="storename" id="q1_store" data-mini="true" /></textarea>
+		<label for="storename_id">Which store did you shop at?</label>
+		<div id="storename_req" style="display:none; color:#ff0000;">You must enter a store name</div>
+		<textarea name="storename" id="storename_id" data-mini="true" /></textarea>
 		<hr>
 		<label for="q2_storecode">What was the store code (if you know it)?</label>
 		<input type="text" name="storecode" id="q2_storecode" data-mini="true" />
 	</div>
 	
 	<footer data-role="footer">
-		<a href="#page2" data-role="button" data-theme="b" data-inline="true">Next</a>
+		<a href="#page2" data-role="button" data-theme="b" data-inline="true" >Next</a>
 	</footer>
 </div>
 		
 <div data-role="page" id="page2" data-add-back-btn="true" data-theme="b">
 	<header data-role="header" >
-		<h1>Page 2 of 5</h1>
+		<h1>Page 2 of 6</h1>
 	</header>
 	
 	<div data-role="content">
-		<div data-role="fieldcontain">
+		<div data-role="fieldcontain"  data-theme="b">
     		<fieldset data-role="controlgroup" data-mini="true">
 	   		<legend>Which day of the week was this on?</legend>
-	   		<input type="radio" name="dayofweek" value="1" id="q3_dayofweek_1"  data-mini="true"/>
+	   		<input type="radio" name="dayofweek" value="1" id="q3_dayofweek_1"  data-mini="true" checked="checked"/>
 	   			<label for="q3_dayofweek_1">Monday</label>
 			<input type="radio" name="dayofweek" value="2" id="q3_dayofweek_2"  data-mini="true"/>
 	   			<label for="q3_dayofweek_2">Tuesday</label>
@@ -78,43 +124,6 @@
 	   			<label for="q3_dayofweek_7">Sunday</label>
 			</fieldset>
 		</div>
-	
-		<div data-role="fieldcontain">
-			<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-				<legend>What time of the day was this?</legend>
-
-    			<label for="q4_hr">Hour</label>
-				<select name="timehr" id="q4_hr">
-					<option value="">Hour</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
-					<option value="11">11</option>
-					<option value="12">12</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>	
-				</select>
-
-				<label for="q4_min">00</label>
-				<select name="timeminute" id="q4_min">
-					<option value="00">00</option>
-					<option value="15">15</option>
-					<option value="30">30</option>
-					<option value="45">45</option>
-				</select>
-
-				<label for="q4_ampm">AM</label>
-				<select name="timeampm" id="q4_ampm">
-					<option value="AM">AM</option>
-					<option value="PM">PM</option>
-				</select>
-			</fieldset>
-		</div>
 	</div>
 				
 	<footer data-role="footer">
@@ -125,20 +134,25 @@
 		
 <div data-role="page" id="page3" data-add-back-btn="true" data-theme="b">
 	<header data-role="header" >
-		<h1>Page 3 of 5</h1>
+		<h1>Page 3 of 6</h1>
 	</header>
 	
 	<div data-role="content">
-		<label for="q5_foundit">Did you find everything you were looking for?</label>
-		<select name="foundit" id="q5_foundit" data-role="slider" data-mini="true">
-			<option value="1">Yes</option>
-			<option value="0">No</option>
-		</select>
-		<hr>
-		<label for="q6_founditcomments">Any comments?</label>
-		<textarea name="founditcomments" id="q6_founditcomments" data-mini="true" /></textarea>
+		<div data-role="fieldcontain">
+			<fieldset data-role="controlgroup" data-mini="true" data-theme="c">
+				<legend>What time of the day was this?</legend>
+	   			<input type="radio" name="timeofday" value="morning" id="q4_timeofday_1"  data-mini="true" checked="checked"/>
+	   				<label for="q4_timeofday_1">Morning (9am - 11:30am)</label>
+				<input type="radio" name="timeofday" value="lunch" id="q4_timeofday_2"  data-mini="true"/>
+					<label for="q4_timeofday_2">Lunch Hour (11:30am - 2pm)</label>
+	   			<input type="radio" name="timeofday" value="afternoon" id="q4_timeofday_3"  data-mini="true"/>
+	   				<label for="q4_timeofday_3">Afternoon (2pm - 5pm)</label>
+	   			<input type="radio" name="timeofday" value="evening" id="q4_timeofday_4"  data-mini="true"/>
+	   				<label for="q4_timeofday_4">Evening (After 5pm)</label>
+			</fieldset>
+		</div>
 	</div>
-	
+				
 	<footer data-role="footer">
 		<a href="#page2" data-role="button" data-theme="b" data-inline="true">Back</a>
 		<a href="#page4" data-role="button" data-theme="b" data-inline="true">Next</a>
@@ -147,7 +161,38 @@
 
 <div data-role="page" id="page4" data-add-back-btn="true" data-theme="b">
 	<header data-role="header" >
-		<h1>Page 4 of 5</h1>
+		<h1>Page 4 of 6</h1>
+	</header>
+	
+	<div data-role="content">
+		<div data-role="fieldcontain"  data-theme="c">
+    		<fieldset data-role="controlgroup" data-mini="true" data-theme="c">
+		   		<legend>What was wrong with your shopping experience?</legend>
+			   	<label><input type="checkbox" name="whatwrong_1" value="Out of stock"/> Out of stock </label>
+			   	<label><input type="checkbox" name="whatwrong_2" value="Did not have the size that I wanted"/> Did not have the size that I wanted </label>
+			   	<label><input type="checkbox" name="whatwrong_3" value="Long queues"/> Long queues </label>
+			   	<label><input type="checkbox" name="whatwrong_4" value="Staff did not know if stock was available"/> Staff did not know if stock was available </label>
+			   	<label><input type="checkbox" name="whatwrong_5" value="No staff available to assist me"/> No staff available to assist me </label>
+			   	<label><input type="checkbox" name="whatwrong_6" value="Untidy fitting Rooms"/> Untidy fitting Rooms </label>
+		   	</fieldset>
+		</div>
+		<hr>
+		<label for="q6_foundit">Did you find everything you were looking for?</label>
+		<select name="foundit" id="q6_foundit" data-role="slider" data-mini="true">
+			<option value="1" selected="selected">Yes</option>
+			<option value="0">No</option>
+		</select>
+	</div>
+	
+	<footer data-role="footer">
+		<a href="#page3" data-role="button" data-theme="b" data-inline="true">Back</a>
+		<a href="#page5" data-role="button" data-theme="b" data-inline="true">Next</a>
+	</footer>
+</div>
+
+<div data-role="page" id="page5" data-add-back-btn="true" data-theme="b">
+	<header data-role="header" >
+		<h1>Page 5 of 6</h1>
 	</header>
 	
 	<div data-role="content" data-theme="c">
@@ -159,14 +204,14 @@
 	</div>
 	
 	<footer data-role="footer">
-		<a href="#page3" data-role="button" data-theme="b" data-inline="true">Back</a>
-		<a href="#page5" data-role="button" data-theme="b" data-inline="true">Next</a>
+		<a href="#page4" data-role="button" data-theme="b" data-inline="true">Back</a>
+		<a href="#page6" data-role="button" data-theme="b" data-inline="true">Next</a>
 	</footer>
 </div>
 	
-<div data-role="page" id="page5" data-add-back-btn="true" data-theme="b">
+<div data-role="page" id="page6" data-add-back-btn="true" data-theme="b">
 	<header data-role="header" >
-		<h1>Page 5 of 5</h1>
+		<h1>Page 6 of 6</h1>
 	</header>
 	
 	<div data-role="content">
@@ -177,11 +222,12 @@
 		<input type="range" name="rating" id="q10_rating" value="3" min="1" max="5" step="1" data-highlight="true" data-mini="true" data-theme="c">
 		<hr>
 		<input type="submit" name="form_submit" value="Finish">
+		<input type="hidden" name="timeurl" value="">
 	</div>
 		
 	
 	<footer data-role="footer">
-		<a href="#page4" data-role="button" data-theme="b" data-inline="true">Back</a>
+		<a href="#page5" data-role="button" data-theme="b" data-inline="true">Back</a>
 	</footer>
 </div>		
 </form>
