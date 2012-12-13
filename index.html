@@ -91,7 +91,7 @@
 		<textarea name="storename" id="storename_id" data-mini="true" /></textarea>
 		<hr>
 		<label for="q2_storecode">What was the store code (if you know it)?</label>
-		<input type="text" name="storecode" id="q2_storecode" data-mini="true" />
+		<input type="text" name="storecode" id="q2_storecode" data-mini="true" maxlength="12" />
 	</div>
 	
 	<footer data-role="footer">
@@ -197,10 +197,10 @@
 	
 	<div data-role="content" data-theme="c">
 		<label for="q7_willing">How much were you willing to spend (in Rands)?</label>
-		<input type="range" name="willingtospend" id="q7_willing" value="0" min="0" max="2000" data-highlight="true" data-mini="true">
+		<input type="range" name="willingtospend" id="q7_willing" value="0" min="0" max="2000" data-highlight="true" data-mini="true" maxlength="9">
 		<hr>
 		<label for="q8_spent">How much did you ultimately spend (in Rands)?</label>
-		<input type="range" name="spent" id="q8_spent" value="0" min="0" max="2000" data-highlight="true" data-mini="true">
+		<input type="range" name="spent" id="q8_spent" value="0" min="0" max="2000" data-highlight="true" data-mini="true"  maxlength="9">
 	</div>
 	
 	<footer data-role="footer">
